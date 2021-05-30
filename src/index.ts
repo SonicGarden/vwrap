@@ -50,17 +50,15 @@ const toVNode = (h: CreateElement, node: Element) => {
 }
 
 const toVNodes = (h: CreateElement, fragment: DocumentFragment) => {
-  const res = []
-  for (let i = 0, l = fragment.children.length; i < l; i++) {
-    res.push(toVNode(h, fragment.children[i]))
-  }
-  return res
+  return Array.from(fragment.childNodes).map((child) =>
+    toVNode(h, child as HTMLElement)
+  )
 }
 
 const getChildren = (el: HTMLElement) => {
   const fragment = document.createDocumentFragment()
   while (el.childNodes.length > 0) {
-    fragment.append(el.childNodes[0])
+    fragment.appendChild(el.childNodes[0])
   }
   return fragment
 }

@@ -29,6 +29,7 @@ type SlotData = {
 
 const toVNode = (h: CreateElement, node: Element) => {
   if (node.nodeType === Node.TEXT_NODE) {
+    // eslint-disable-next-line unicorn/no-null
     return (node as unknown as CharacterData).data.trim() ? (node as unknown as CharacterData).data : null
   } else if (node.nodeType === 1) {
     const data: SlotData = {
@@ -67,7 +68,7 @@ type VwrapOptions = {
 
 export const vwrap = (
   name: string,
-  component: ComponentOptions<Vue> | VueConstructor<Vue>,
+  component: ComponentOptions<Vue> | VueConstructor<Vue> | (() => Promise<ComponentOptions<Vue> | VueConstructor<Vue>>),
   options: VwrapOptions = {},
 ): void => {
   class VwrapElement extends HTMLElement {

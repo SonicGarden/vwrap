@@ -51,13 +51,17 @@ const toVNode = (h: CreateElement, node: Element) => {
 }
 
 const toVNodes = (h: CreateElement, fragment: DocumentFragment) => {
-  return [...fragment.childNodes].map((child) => toVNode(h, child as HTMLElement))
+  // NOTE: IE11
+  // eslint-disable-next-line unicorn/prefer-spread
+  return Array.from(fragment.childNodes).map((child) => toVNode(h, child as HTMLElement))
 }
 
 const getChildren = (el: HTMLElement) => {
   const fragment = document.createDocumentFragment()
   while (el.childNodes.length > 0) {
-    fragment.append(el.childNodes[0])
+    // NOTE: IE11
+    // eslint-disable-next-line unicorn/prefer-dom-node-append
+    fragment.appendChild(el.childNodes[0])
   }
   return fragment
 }

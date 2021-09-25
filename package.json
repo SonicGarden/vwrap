@@ -1,8 +1,15 @@
 {
   "name": "@sonicgarden/vwrap",
-  "version": "0.0.2",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "version": "0.1.0",
+  "main": "lib/index.js",
+  "module": "esm/index.js",
+  "types": "types/index.d.ts",
+  "typings": "types/index.d.ts",
+  "files": [
+    "lib/",
+    "esm/",
+    "types/"
+  ],
   "author": "aki77",
   "license": "MIT",
   "repository": {
@@ -10,14 +17,21 @@
     "url": "https://github.com/SonicGarden/vwrap.git"
   },
   "scripts": {
-    "build": "tsc",
+    "build:cjs": "tsc",
+    "build:es": "tsc -m esNext --outDir esm",
+    "build": "yarn clean && yarn build:cjs && yarn build:es",
+    "clean": "rimraf lib esm types",
     "prepublishOnly": "tsc"
   },
   "devDependencies": {
+    "@sonicgarden/eslint-plugin": "^0.3.0",
+    "@sonicgarden/prettier-config": "^0.0.1",
+    "eslint": "^7.32.0",
     "typescript": "^4.2.4",
     "vue": "^2.6.12"
   },
   "peerDependencies": {
     "vue": "^2.6.12"
-  }
+  },
+  "prettier": "@sonicgarden/prettier-config"
 }

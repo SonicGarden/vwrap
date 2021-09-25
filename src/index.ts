@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import Vue, { ComponentOptions, VueConstructor, CreateElement } from 'vue'
 
 const getProps = (element: HTMLElement): any => {
@@ -28,9 +29,8 @@ type SlotData = {
 
 const toVNode = (h: CreateElement, node: Element) => {
   if (node.nodeType === Node.TEXT_NODE) {
-    return (node as unknown as CharacterData).data.trim()
-      ? (node as unknown as CharacterData).data
-      : null
+    // eslint-disable-next-line unicorn/no-null
+    return (node as unknown as CharacterData).data.trim() ? (node as unknown as CharacterData).data : null
   } else if (node.nodeType === 1) {
     const data: SlotData = {
       attrs: getAttributes(node),
@@ -45,20 +45,19 @@ const toVNode = (h: CreateElement, node: Element) => {
     const tag = node.tagName === 'TEMPLATE' ? 'div' : node.tagName
     return h(tag, data)
   } else {
+    // eslint-disable-next-line unicorn/no-null
     return null
   }
 }
 
 const toVNodes = (h: CreateElement, fragment: DocumentFragment) => {
-  return Array.from(fragment.childNodes).map((child) =>
-    toVNode(h, child as HTMLElement)
-  )
+  return [...fragment.childNodes].map((child) => toVNode(h, child as HTMLElement))
 }
 
 const getChildren = (el: HTMLElement) => {
   const fragment = document.createDocumentFragment()
   while (el.childNodes.length > 0) {
-    fragment.appendChild(el.childNodes[0])
+    fragment.append(el.childNodes[0])
   }
   return fragment
 }
@@ -69,8 +68,8 @@ type VwrapOptions = {
 
 export const vwrap = (
   name: string,
-  component: ComponentOptions<Vue> | VueConstructor<Vue>,
-  options: VwrapOptions = {}
+  component: ComponentOptions<Vue> | VueConstructor<Vue> | (() => Promise<ComponentOptions<Vue> | VueConstructor<Vue>>),
+  options: VwrapOptions = {},
 ): void => {
   class VwrapElement extends HTMLElement {
     private __vue_custom_element__?: InstanceType<typeof Vue>
@@ -104,12 +103,13 @@ export const vwrap = (
             {
               props,
             },
-            toVNodes(h, children)
+            toVNodes(h, children),
           )
         },
       })
 
       this.__vue_custom_element__ = wrapper
+      // eslint-disable-next-line github/unescaped-html-literal
       this.innerHTML = '<div></div>'
       this.__vue_custom_element__.$mount(this.children[0])
     }

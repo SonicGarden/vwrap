@@ -2,6 +2,13 @@
 
 Wrapping Vue components with custom elements.
 
+## Vue compatibility
+
+| Vue Version | vwrap Version |
+| ------------- |:-------------:|
+| v3.x | 1.x |
+| v2.x | 0.x |
+
 ## Installation
 
 ```

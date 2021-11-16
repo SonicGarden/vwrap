@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import Vue, { ComponentOptions, VueConstructor, CreateElement } from 'vue'
+import { ComponentOptions, DefineComponent, createApp, h, App } from 'vue'
 
 const getProps = (element: HTMLElement): any => {
   const json = element.dataset.props
@@ -27,7 +27,7 @@ type SlotData = {
   }
 }
 
-const toVNode = (h: CreateElement, node: Element) => {
+const toVNode = (node: Element) => {
   if (node.nodeType === Node.TEXT_NODE) {
     // eslint-disable-next-line unicorn/no-null
     return (node as unknown as CharacterData).data.trim() ? (node as unknown as CharacterData).data : null
@@ -50,18 +50,14 @@ const toVNode = (h: CreateElement, node: Element) => {
   }
 }
 
-const toVNodes = (h: CreateElement, fragment: DocumentFragment) => {
-  // NOTE: IE11
-  // eslint-disable-next-line unicorn/prefer-spread
-  return Array.from(fragment.childNodes).map((child) => toVNode(h, child as HTMLElement))
+const toVNodes = (fragment: DocumentFragment) => {
+  return [...fragment.childNodes].map((child) => toVNode(child as HTMLElement))
 }
 
 const getChildren = (el: HTMLElement) => {
   const fragment = document.createDocumentFragment()
   while (el.childNodes.length > 0) {
-    // NOTE: IE11
-    // eslint-disable-next-line unicorn/prefer-dom-node-append
-    fragment.appendChild(el.childNodes[0])
+    fragment.append(el.childNodes[0])
   }
   return fragment
 }
@@ -72,11 +68,11 @@ type VwrapOptions = {
 
 export const vwrap = (
   name: string,
-  component: ComponentOptions<Vue> | VueConstructor<Vue> | (() => Promise<ComponentOptions<Vue> | VueConstructor<Vue>>),
+  component: ComponentOptions | DefineComponent | (() => Promise<ComponentOptions | DefineComponent>),
   options: VwrapOptions = {},
 ): void => {
   class VwrapElement extends HTMLElement {
-    private __vue_custom_element__?: InstanceType<typeof Vue>
+    private __vue_custom_element__?: App
 
     connectedCallback() {
       if (!options.hasSlot) return this.render()
@@ -89,7 +85,7 @@ export const vwrap = (
     disconnectedCallback() {
       if (!this.__vue_custom_element__) return
 
-      this.__vue_custom_element__.$destroy()
+      this.__vue_custom_element__.unmount()
       delete this.__vue_custom_element__
     }
 
@@ -99,23 +95,17 @@ export const vwrap = (
       const children = getChildren(this)
       const props = getProps(this)
 
-      const wrapper = new Vue({
+      const wrapper = createApp({
         name: 'VWrapper',
-        render(h) {
-          return h(
-            component,
-            {
-              props,
-            },
-            toVNodes(h, children),
-          )
+        render() {
+          return h(component, props, toVNodes(children))
         },
       })
 
       this.__vue_custom_element__ = wrapper
       // eslint-disable-next-line github/unescaped-html-literal
       this.innerHTML = '<div></div>'
-      this.__vue_custom_element__.$mount(this.children[0])
+      this.__vue_custom_element__.mount(this.children[0])
     }
   }
 

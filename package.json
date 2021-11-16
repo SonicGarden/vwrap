@@ -1,6 +1,6 @@
 {
   "name": "@sonicgarden/vwrap",
-  "version": "0.1.1",
+  "version": "1.0.0",
   "main": "lib/index.js",
   "module": "esm/index.js",
   "types": "types/index.d.ts",

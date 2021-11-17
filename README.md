@@ -41,6 +41,8 @@ You can then use this element in an HTML file:
 </my-component-with-slot>
 ```
 
+Refer to the [type definitions](https://github.com/SonicGarden/vwrap/blob/6268e2a953ad28337e3af2faad1d5eaf57ce91b8/src/index.ts#L59-L62) for more options.
+
 ## Limitation
 
 - Attribute changes

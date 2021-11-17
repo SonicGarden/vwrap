@@ -39,8 +39,12 @@ const toVNode = (node: Element): [string, VNode | string] | undefined => {
 }
 
 const toVNodes = (fragment: DocumentFragment) => {
-  // eslint-disable-next-line unicorn/no-array-callback-reference
-  const nodes = [...fragment.childNodes].map((child) => toVNode(child as HTMLElement)).filter(notEmpty)
+  // eslint-disable-next-line unicorn/prefer-spread
+  const nodes = Array.from(fragment.childNodes)
+    .map((child) => toVNode(child as HTMLElement))
+    // eslint-disable-next-line unicorn/no-array-callback-reference
+    .filter(notEmpty)
+    .map(([slot, node]) => [slot, () => node])
   return Object.fromEntries(nodes)
 }
 
@@ -54,11 +58,15 @@ const getChildren = (el: HTMLElement) => {
 
 type VwrapOptions = {
   hasSlot?: boolean
+  beforeMountCallback?: (app: App) => void
 }
 
 export const vwrap = (
   name: string,
-  component: ComponentOptions | DefineComponent | (() => Promise<ComponentOptions | DefineComponent>),
+  component:
+    | ComponentOptions
+    | DefineComponent<any, any, any>
+    | (() => Promise<ComponentOptions | DefineComponent<any, any, any>>),
   options: VwrapOptions = {},
 ): void => {
   class VwrapElement extends HTMLElement {
@@ -79,18 +87,23 @@ export const vwrap = (
       delete this.__vue_custom_element__
     }
 
-    render() {
+    async render() {
       if (this.__vue_custom_element__) return
 
       const children = getChildren(this)
       const props = getProps(this)
+      const resolvedComponent = typeof component === 'function' ? await component() : component
 
       const wrapper = createApp({
         name: 'VWrapper',
         render() {
-          return h(component, props, toVNodes(children))
+          return h(resolvedComponent, props, toVNodes(children))
         },
       })
+
+      if (options.beforeMountCallback) {
+        options.beforeMountCallback(wrapper)
+      }
 
       this.__vue_custom_element__ = wrapper
       // eslint-disable-next-line github/unescaped-html-literal

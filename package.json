@@ -24,9 +24,9 @@
     "prepublishOnly": "tsc"
   },
   "devDependencies": {
-    "@sonicgarden/eslint-plugin": "^0.3.0",
+    "@sonicgarden/eslint-plugin": "^0.4.13",
     "@sonicgarden/prettier-config": "^0.0.1",
-    "eslint": "^7.32.0",
+    "eslint": "^8.19.0",
     "typescript": "^4.2.4",
     "vue": "^2.6.12"
   },

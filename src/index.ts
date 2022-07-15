@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import Vue, { ComponentOptions, VueConstructor, CreateElement } from 'vue'
+import type { DefineComponent } from 'vue/types/v3-define-component'
 
 const getProps = (element: HTMLElement): any => {
   const json = element.dataset.props
@@ -70,9 +71,14 @@ type VwrapOptions = {
   hasSlot?: boolean
 }
 
+type Component =
+  | ComponentOptions<Vue>
+  | VueConstructor<Vue>
+  | DefineComponent<any, any, any, any, any, any, any, any, any, any, any>
+
 export const vwrap = (
   name: string,
-  component: ComponentOptions<Vue> | VueConstructor<Vue> | (() => Promise<ComponentOptions<Vue> | VueConstructor<Vue>>),
+  component: Component | (() => Promise<Component>),
   options: VwrapOptions = {},
 ): void => {
   class VwrapElement extends HTMLElement {

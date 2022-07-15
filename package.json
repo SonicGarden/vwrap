@@ -1,6 +1,6 @@
 {
   "name": "@sonicgarden/vwrap",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "main": "lib/index.js",
   "module": "esm/index.js",
   "types": "types/index.d.ts",
@@ -24,14 +24,14 @@
     "prepublishOnly": "tsc"
   },
   "devDependencies": {
-    "@sonicgarden/eslint-plugin": "^0.3.0",
+    "@sonicgarden/eslint-plugin": "^0.4.13",
     "@sonicgarden/prettier-config": "^0.0.1",
-    "eslint": "^7.32.0",
+    "eslint": "^8.19.0",
     "typescript": "^4.2.4",
-    "vue": "^2.6.12"
+    "vue": "^2.7.5"
   },
   "peerDependencies": {
-    "vue": "^2.6.12"
+    "vue": "^2.7.5"
   },
   "prettier": "@sonicgarden/prettier-config"
 }

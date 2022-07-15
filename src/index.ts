@@ -61,12 +61,11 @@ type VwrapOptions = {
   beforeMountCallback?: (app: App) => void
 }
 
+type Component = ComponentOptions | DefineComponent<any, any, any, any, any, any, any, any, any, any, any, any>
+
 export const vwrap = (
   name: string,
-  component:
-    | ComponentOptions
-    | DefineComponent<any, any, any>
-    | (() => Promise<ComponentOptions | DefineComponent<any, any, any>>),
+  component: Component | (() => Promise<Component>),
   options: VwrapOptions = {},
 ): void => {
   class VwrapElement extends HTMLElement {
